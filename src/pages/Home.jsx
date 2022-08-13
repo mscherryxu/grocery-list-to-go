@@ -19,10 +19,14 @@ export default function Home() {
       addDoc(ref, data);
       getDocs(ref)
         .then((snapshot) => {
-          console.log(snapshot.docs);
+          let list = [];
+          snapshot.docs.forEach((doc) => {
+            list.push({ ...doc.data(), id: doc.id })
+          })
+          console.log(list);
         })
     } catch(err) {
-      console.error(err);
+      console.error(err.message);
     }
   }
   return (
@@ -30,13 +34,19 @@ export default function Home() {
       <form onSubmit={handleSave}>
         <div>
           <label>Enter grocery item</label>
-          <input type="text" ref={itemRef} />
+          <input type="text" name="item" ref={itemRef} required />
         </div>
         <div>
           <label>Enter quantity</label>
-          <input type="number" ref={quantityRef} />
+          <input type="number" name="quantity" ref={quantityRef} required/>
         </div>
         <button type="submit">Save</button>
+      </form>
+
+      <form>
+        <label>Delete</label>
+        <input type="text" name="id" required />
+        <button>Delete Item</button>
       </form>
       <div>
       <div>
