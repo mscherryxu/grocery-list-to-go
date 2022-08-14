@@ -1,13 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { firestore } from '../firebase';
 import { addDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
 
-export default function Home() {
+export default function Home(props) {
   const [deleteId, setDeleteId] = useState(null);
   const [groceryList, setGroceryList] = useState([]);
   const itemRef = useRef();
   const quantityRef = useRef();
-  const collectionRef = collection(firestore, 'grocery-list');
+  const collectionRef = collection(props.firestore, 'grocery-list');
 
   useEffect(() => {
     async function fetchData() {
@@ -19,7 +18,7 @@ export default function Home() {
       setGroceryList(list);
     }
     fetchData();
-  });
+  }, []);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -64,12 +63,11 @@ export default function Home() {
             await deleteDoc(groceryList[i].ref);
           }
         }
-
-        let list = [...groceryList];
-        list.filter((item) => {
-          return item.id !== deleteId;
-        });
-        setGroceryList(list);
+        setGroceryList(
+          groceryList.filter((item) => {
+            return item.id !== deleteId;
+          })
+        );
       }
     } catch (err) {
       console.error(err.message);
@@ -91,7 +89,12 @@ export default function Home() {
       </form>
 
       <form onSubmit={handleDelete} className="delete">
-        <label>Item ID</label>
+        <label>
+          <p>
+            Please copy and paste each item's unique ID to delete item from the
+            list.
+          </p>
+        </label>
         <input
           type="text"
           name="id"
