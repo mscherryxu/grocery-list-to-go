@@ -1,5 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { addDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
+// import Typography from '@mui/material/Typography';
+// import Button from '@mui/material/Button';
+// import Container from '@mui/material/Container';
+import { TextField, Typography, Button, Container } from '@mui/material';
 
 export default function Home(props) {
   const [deleteId, setDeleteId] = useState(null);
@@ -8,8 +12,10 @@ export default function Home(props) {
   const quantityRef = useRef();
   const collectionRef = collection(props.firestore, 'grocery-list');
 
+  // on mount once with an empty array
   useEffect(() => {
     async function fetchData() {
+      // equivalent to findAll in Sequelize
       const snapshot = await getDocs(collectionRef);
       let list = [];
       snapshot.docs.forEach((doc) => {
@@ -22,7 +28,6 @@ export default function Home(props) {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    console.log(itemRef.current.value);
 
     const data = {
       item: itemRef.current.value,
@@ -30,52 +35,34 @@ export default function Home(props) {
     };
     try {
       const newItem = await addDoc(collectionRef, data);
-      /*const snapshot = await getDocs(ref);
-      let list = [];
-      snapshot.docs.forEach((doc) => {
-        list.push({ ...doc.data(), id: doc.id });
-      });*/
       let list = [...groceryList];
       list.push({ ...data, id: newItem.id, ref: newItem.ref });
       setGroceryList(list);
+      itemRef.current.value = '';
+      quantityRef.current.value = '';
     } catch (err) {
       console.error(err.message);
     }
   };
 
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    try {
-      if (deleteId !== '') {
-        //const snapshot = await getDocs(ref);
-        /* snapshot.docs.forEach(async (item) => {
-          if (item.id === deleteId) {
-            console.info('deleting', item.id);
-            await deleteDoc(item.ref);
-          }
-        });
-        let list = [];
-        snapshot.docs.forEach((doc) => {
-          list.push({ ...doc.data(), id: doc.id });
-        });*/
-        for (let i = 0; i < groceryList.length; i++) {
-          if (groceryList[i].id === deleteId) {
-            await deleteDoc(groceryList[i].ref);
-          }
+  const handleDelete = async (itemId) => {
+    // if deleteId is not an empty sting
+    if (deleteId !== '') {
+      for (let i = 0; i < groceryList.length; i++) {
+        if (groceryList[i].id === itemId) {
+          await deleteDoc(groceryList[i].ref);
         }
-        setGroceryList(
-          groceryList.filter((item) => {
-            return item.id !== deleteId;
-          })
-        );
       }
-    } catch (err) {
-      console.error(err.message);
+      const newGroceryList = groceryList.filter((item) => {
+        return item.id !== itemId;
+      });
+      await setGroceryList(newGroceryList);
+      setDeleteId(itemId);
     }
   };
 
   return (
-    <div>
+    <Container>
       <form onSubmit={handleAdd}>
         <div>
           <label>Enter grocery item</label>
@@ -85,35 +72,27 @@ export default function Home(props) {
           <label>Enter quantity</label>
           <input type="number" name="quantity" ref={quantityRef} required />
         </div>
-        <button type="submit">Add Item</button>
-      </form>
-
-      <form onSubmit={handleDelete} className="delete">
-        <label>
-          <p>
-            Please copy and paste each item's unique ID to delete item from the
-            list.
-          </p>
-        </label>
-        <input
-          type="text"
-          name="id"
-          required
-          onChange={(e) => {
-            setDeleteId(e.currentTarget.value);
-          }}
-        />
-        <button>Delete Item</button>
+        <Button type="submit" color="primary" variant="contained">
+          Add Item
+        </Button>
       </form>
       <div>
         {groceryList.map((row) => {
           return (
             <p key={row.id}>
               {row.quantity} {row.item} ID: {row.id}
+              <Button
+                type="button"
+                color="error"
+                variant="outlined"
+                onClick={() => handleDelete(row.id)}
+              >
+                Delete
+              </Button>
             </p>
           );
         })}
       </div>
-    </div>
+    </Container>
   );
 }

@@ -3,6 +3,25 @@ import Home from './pages/Home';
 import './App.css';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { purple } from '@mui/material/colors';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#008394',
+    },
+    secondary: purple,
+  },
+  typography: {
+    fontFamily: 'Raleway',
+    fontWeightLight: 300,
+    fontWeightRegular: 400,
+    fontWeightMedium: 500,
+    fontWeightBold: 600,
+  },
+});
 
 const App = () => {
   const firebaseConfig = {
@@ -18,10 +37,20 @@ const App = () => {
   const app = initializeApp(firebaseConfig);
   const firestore = getFirestore(app);
   return (
-    <div className="App">
-      <h1>Here is your grocery list to-go!</h1>
-      <Home firestore={firestore} />
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <Typography
+          variant="h2"
+          component="h1"
+          color="primary"
+          align="center"
+          gutterBottom
+        >
+          Here is your grocery list to-go!
+        </Typography>
+        <Home firestore={firestore} />
+      </div>
+    </ThemeProvider>
   );
 };
 
