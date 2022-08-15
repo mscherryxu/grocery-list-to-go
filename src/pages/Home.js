@@ -43,7 +43,7 @@ export default function Home(props) {
     try {
       const newItem = await addDoc(collectionRef, data);
       let list = [...groceryList];
-      list.push({ ...data, id: newItem.id, ref: newItem.ref });
+      list.push({ ...data, id: newItem.id, ref: newItem });
       setGroceryList(list);
       itemRef.current.value = '';
       quantityRef.current.value = '';
@@ -128,7 +128,7 @@ export default function Home(props) {
         {groceryList.map((row) => {
           return (
             <p key={row.id} className="grocery-list-item">
-              {row.quantity} {row.item} ID: {row.id}
+              {row.quantity} {row.item}
               <Button
                 type="button"
                 color="error"
