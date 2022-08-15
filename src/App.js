@@ -44,9 +44,10 @@ const App = () => {
           component="h1"
           color="primary"
           align="center"
+          className="slogan"
           gutterBottom
         >
-          Here is your grocery list to-go!
+          Here is your grocery list to-go! 🛒
         </Typography>
         <Home firestore={firestore} />
       </div>

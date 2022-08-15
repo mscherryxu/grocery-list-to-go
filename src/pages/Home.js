@@ -5,6 +5,13 @@ import { addDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
 // import Container from '@mui/material/Container';
 import { TextField, Typography, Button, Container } from '@mui/material';
 
+// commented code was for material UI
+// const styles = {
+//   marginTop: 2,
+//   marginBottom: 2,
+//   display: 'block',
+// };
+
 export default function Home(props) {
   const [deleteId, setDeleteId] = useState(null);
   const [groceryList, setGroceryList] = useState([]);
@@ -63,23 +70,64 @@ export default function Home(props) {
 
   return (
     <Container>
-      <form onSubmit={handleAdd}>
-        <div>
-          <label>Enter grocery item</label>
-          <input type="text" name="item" ref={itemRef} required />
+      <form noValidate autoComplete="off" onSubmit={handleAdd}>
+        <div className="form__group">
+          <label className="form__label">Enter grocery item</label>
+          <input
+            type="text"
+            name="item"
+            ref={itemRef}
+            className="form__field"
+            required
+          />
+        </div>
+        {/*Attempted to use material UI to add items*/}
+        {/* <div>
+          <TextField
+            onChange={(e) => setItem(e.target.value)}
+            sx={styles}
+            type="text"
+            name="item"
+            ref={itemRef}
+            label="Enter grocery item"
+            variant="outlined"
+            color="primary"
+            required
+          />
         </div>
         <div>
-          <label>Enter quantity</label>
-          <input type="number" name="quantity" ref={quantityRef} required />
+          <TextField
+            onChange={(e) => setQuantity(e.target.value)}
+            sx={styles}
+            type="number"
+            name="item"
+            ref={quantityRef}
+            label="Enter quantity"
+            variant="outlined"
+            color="primary"
+            required
+          />
+        </div> */}
+        <div className="form__group">
+          <label className="form__label">Enter quantity</label>
+          <input
+            type="number"
+            name="quantity"
+            ref={quantityRef}
+            className="form__field"
+            required
+          />
         </div>
-        <Button type="submit" color="primary" variant="contained">
-          Add Item
-        </Button>
+        <div className="submit-button">
+          <Button type="submit" color="primary" variant="contained">
+            Add Item
+          </Button>
+        </div>
       </form>
-      <div>
+      <div className="grocery-list">
         {groceryList.map((row) => {
           return (
-            <p key={row.id}>
+            <p key={row.id} className="grocery-list-item">
               {row.quantity} {row.item} ID: {row.id}
               <Button
                 type="button"
