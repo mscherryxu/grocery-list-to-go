@@ -1,16 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { addDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
-// import Typography from '@mui/material/Typography';
-// import Button from '@mui/material/Button';
-// import Container from '@mui/material/Container';
-import { TextField, Typography, Button, Container } from '@mui/material';
+import { Button, Container } from '@mui/material';
 
-// commented code was for material UI
-// const styles = {
-//   marginTop: 2,
-//   marginBottom: 2,
-//   display: 'block',
-// };
+const buttonStyles = {
+  marginLeft: 1,
+};
 
 export default function Home(props) {
   const [deleteId, setDeleteId] = useState(null);
@@ -41,12 +35,14 @@ export default function Home(props) {
       quantity: quantityRef.current.value,
     };
     try {
-      const newItem = await addDoc(collectionRef, data);
-      let list = [...groceryList];
-      list.push({ ...data, id: newItem.id, ref: newItem });
-      setGroceryList(list);
-      itemRef.current.value = '';
-      quantityRef.current.value = '';
+      if (data.item !== '' || data.item !== '') {
+        const newItem = await addDoc(collectionRef, data);
+        let list = [...groceryList];
+        list.push({ ...data, id: newItem.id, ref: newItem });
+        setGroceryList(list);
+        itemRef.current.value = '';
+        quantityRef.current.value = '';
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -70,7 +66,7 @@ export default function Home(props) {
 
   return (
     <Container>
-      <form noValidate autoComplete="off" onSubmit={handleAdd}>
+      <form autoComplete="off" onSubmit={handleAdd}>
         <div className="form__group">
           <label className="form__label">Enter grocery item</label>
           <input
@@ -81,33 +77,6 @@ export default function Home(props) {
             required
           />
         </div>
-        {/*Attempted to use material UI to add items*/}
-        {/* <div>
-          <TextField
-            onChange={(e) => setItem(e.target.value)}
-            sx={styles}
-            type="text"
-            name="item"
-            ref={itemRef}
-            label="Enter grocery item"
-            variant="outlined"
-            color="primary"
-            required
-          />
-        </div>
-        <div>
-          <TextField
-            onChange={(e) => setQuantity(e.target.value)}
-            sx={styles}
-            type="number"
-            name="item"
-            ref={quantityRef}
-            label="Enter quantity"
-            variant="outlined"
-            color="primary"
-            required
-          />
-        </div> */}
         <div className="form__group">
           <label className="form__label">Enter quantity</label>
           <input
@@ -133,6 +102,8 @@ export default function Home(props) {
                 type="button"
                 color="error"
                 variant="outlined"
+                className="delete-button"
+                sx={buttonStyles}
                 onClick={() => handleDelete(row.id)}
               >
                 Delete
